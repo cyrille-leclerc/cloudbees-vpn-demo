@@ -1,5 +1,8 @@
 # CloudBees VPN demo
 
+![Cloudbees Vpn Client Demo](https://raw.github.com/wiki/cyrille-leclerc/cloudbees-vpn-demo/img/cloudbees-vpn-client.png)
+
+
 ## CloudBeesVpnClient
 
 * Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L78
@@ -12,8 +15,98 @@
 
       sysctl -w net.ipv4.ip_forward=1
       iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10
+
+### Jenkins Slave environment details
+
+See Jenkins job https://testme.ci.beescloud.com/job/vpn-test-build/
+
+
+```
++ uname -mrs
+Linux 3.7.10-101.fc17.x86_64 x86_64
+```
+
+```
++ uname -a
+Linux localhost 3.7.10-101.fc17.x86_64 #1 SMP Wed Feb 27 19:14:22 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux
+```
+
+```
++ cat /etc/fedora-release /etc/os-release /etc/redhat-release /etc/system-release
+Fedora release 17 (Beefy Miracle)
+NAME=Fedora
+VERSION="17 (Beefy Miracle)"
+ID=fedora
+VERSION_ID=17
+PRETTY_NAME="Fedora 17 (Beefy Miracle)"
+ANSI_COLOR="0;34"
+CPE_NAME="cpe:/o:fedoraproject:fedora:17"
+Fedora release 17 (Beefy Miracle)
+Fedora release 17 (Beefy Miracle)
+```
+
+```
++ /sbin/ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.10.2  netmask 255.255.255.252  broadcast 192.168.10.3
+        inet6 fe80::c0ff:bff:fe0a:9af7  prefixlen 64  scopeid 0x20<link>
+        ether c2:ff:0b:0a:9a:f7  txqueuelen 1000  (Ethernet)
+        RX packets 37685  bytes 7474425 (7.1 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 19394  bytes 4173271 (3.9 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 0  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+```
+
+```
++ /sbin/route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.10.1    0.0.0.0         UG    0      0        0 eth0
+192.168.10.0    0.0.0.0         255.255.255.252 U     0      0        0 eth0
+```
+
+### Errors from Jenkins Slave
+
+Jenkins job https://testme.ci.beescloud.com/job/vpn-test-build/
+
+```
++ curl -v http://192.168.252.6
+* About to connect() to 192.168.252.6 port 80 (#0)
+*   Trying 192.168.252.6...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Network is unreachable
+* couldn't connect to host
+* Closing connection #0
+curl: (7) couldn't connect to host
+```
+
+```
++ curl -v http://192.168.5.10
+* About to connect() to 192.168.5.10 port 80 (#0)
+*   Trying 192.168.5.10...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Network is unreachable
+* couldn't connect to host
+* Closing connection #0
+curl: (7) couldn't connect to host
+```
+
       
-### Troubleshooting on CloudBeesVpnClient
+### CloudBeesVpnClient environment details
 ```
 [ec2-user@ip-192-168-5-10 log]$ ifconfig
 eth0      Link encap:Ethernet  HWaddr 1A:9F:8C:38:81:2D
@@ -63,4 +156,3 @@ traceroute to 192.168.252.1 (192.168.252.1), 30 hops max, 60 byte packets
 * Private IP: `192.168.5.50`
 * Subversion installed with http://localhost/svn/petclinic/trunk/ and user "cloudbees:cloudbees"
 
-![Cloudbees Vpn Client Demo](https://raw.github.com/wiki/cyrille-leclerc/cloudbees-vpn-demo/img/cloudbees-vpn-client.png)
