@@ -410,18 +410,15 @@
                                     "Fn::Join": [
                                         "", 
                                         [
-                                           "# john:doe\n",
+                                            "# john:doe\n", 
                                             "john:$apr1$fhK0VPL8$0mRD4G0RR6lgsDHwEYlhJ/\n", 
-                                            "# cloudbees:cloudbees\n",
+                                            "# cloudbees:cloudbees\n", 
                                             "cloudbees:$apr1$jyVzG0rQ$w/QQRwe5w7JEG8XdFmWfP0\n"
                                         ]
                                     ]
                                 }
                             }
                         }, 
-                        "sources" : {
-                          "/tmp/svn-import/gpetclinic/trunk": "https://github.com/CloudBees-community/grails-petclinic-clickstart/archive/master.zip" 
-                        },
                         "packages": {
                             "yum": {
                                 "git": [], 
@@ -439,6 +436,8 @@
                                     "ensureRunning": "true"
                                 }
                             }
+                        }, 
+                        "sources": {
                         }
                     }
                 }, 
@@ -486,11 +485,10 @@
                                 "#!/bin/bash\n", 
                                 "######\n", 
                                 "# SOURCE CODE REPOSITORIES\n", 
-                                "######\n",
-                                "# install subversion before using executables 'svnadmin' and 'svn'\n",
-                                "yum install -y subversion\n", 
-                                "# install httpd before using user 'apache'\n",
-                                "yum install -y httpd\n", 
+                                "######\n", 
+                                "# install subversion before using executables 'svnadmin' and 'svn'\n", 
+                                "# install httpd before using user 'apache'\n", 
+                                "yum install -y subversion httpd mod_dav_svn\n", 
                                 "## REATE REPO\n", 
                                 "##\n", 
                                 "mkdir /var/svn\n", 
@@ -499,13 +497,20 @@
                                 "svnadmin create /var/svn/$REPOS\n", 
                                 "chown -R apache:apache /var/svn/$REPOS\n", 
                                 "chmod -R g+ws /var/svn/$REPOS\n", 
+                                "\n", 
                                 "REPOS=petclinic\n", 
                                 "svnadmin create /var/svn/$REPOS\n", 
+                                "wget -O /tmp/petclinic.zip https://github.com/CloudBees-community/grails-petclinic-clickstart/archive/master.zip\n",
+                                "unzip -d /tmp/ /tmp/petclinic.zip\n",
+                                "svn import -m\"initial import\" /tmp/grails-petclinic-clickstart-master file:///var/svn/$REPOS/ --username cloudbees --password cloudbees\n", 
+                                
                                 "chown -R apache:apache /var/svn/$REPOS\n", 
                                 "chmod -R g+ws /var/svn/$REPOS\n", 
-                                "\n", 
-                                "svn import -m\"initial import\" /tmp/svn-import/gpetclinic/trunk http://localhost/svn/petclinic --username cloudbees --password cloudbees\n",
-                                "rm -rf /tmp/svn-import\n",
+                                "\n",
+                                "#cleanup\n",
+                                "rm -rf /tmp/petclinic.zip\n", 
+                                "rm -rf /tmp/grails-petclinic-clickstart-master\n", 
+                                "\n",
                                 "######", 
                                 "# STANDARD CLOUDFORMATION SCRIPT (see vpc_single_instance_in_subnet.template)", 
                                 "######", 
