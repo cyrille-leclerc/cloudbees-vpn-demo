@@ -3,6 +3,12 @@
 ![Cloudbees Vpn Client Demo](https://raw.github.com/wiki/cyrille-leclerc/cloudbees-vpn-demo/img/cloudbees-vpn-client.png)
 
 
+## MyCompany Network
+
+ * CIDR Block `192.168.5.0/24`
+ 
+
+
 ## CloudBeesVpnClient
 
 * Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L78
@@ -15,6 +21,16 @@
 
       sysctl -w net.ipv4.ip_forward=1
       iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10
+
+## SourceCodeServer
+
+* Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L382
+* Private IP: `192.168.5.50`
+* Subversion installed with http://localhost/svn/petclinic/trunk/ and user "cloudbees:cloudbees"
+
+
+## Troubleshooting Info
+
 
 ### Jenkins Slave environment details
 
@@ -75,36 +91,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.10.0    0.0.0.0         255.255.255.252 U     0      0        0 eth0
 ```
 
-### Errors from Jenkins Slave
-
-Jenkins job https://testme.ci.beescloud.com/job/vpn-test-build/
-
-```
-+ curl -v http://192.168.252.6
-* About to connect() to 192.168.252.6 port 80 (#0)
-*   Trying 192.168.252.6...
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Network is unreachable
-* couldn't connect to host
-* Closing connection #0
-curl: (7) couldn't connect to host
-```
-
-```
-+ curl -v http://192.168.5.10
-* About to connect() to 192.168.5.10 port 80 (#0)
-*   Trying 192.168.5.10...
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Network is unreachable
-* couldn't connect to host
-* Closing connection #0
-curl: (7) couldn't connect to host
-```
-
       
 ### CloudBeesVpnClient environment details
 ```
@@ -150,9 +136,5 @@ traceroute to 192.168.252.1 (192.168.252.1), 30 hops max, 60 byte packets
  1  192.168.252.1 (192.168.252.1)  1.585 ms  1.432 ms  1.394 ms
 ```
 
-## SourceCodeServer
 
-* Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L382
-* Private IP: `192.168.5.50`
-* Subversion installed with http://localhost/svn/petclinic/trunk/ and user "cloudbees:cloudbees"
 
