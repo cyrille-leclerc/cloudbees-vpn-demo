@@ -18,9 +18,11 @@
   * [customer.conf](https://s3.amazonaws.com/cloudbees-vpn/customer.conf)
 * OpenVpn logs: `/var/log/openvpn`
 * Network Configuration 
-
-      sysctl -w net.ipv4.ip_forward=1
-      iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10
+ 
+    ```
+sysctl -w net.ipv4.ip_forward=1
+iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10
+```
 
 ## SourceCodeServer
 
