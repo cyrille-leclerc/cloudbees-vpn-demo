@@ -86,11 +86,11 @@
                             }, 
                             "/etc/openvpn/customer.conf": {
                                 "mode": "000644", 
-                                "source": "https://s3.amazonaws.com/cloudbees-vpn/customer.conf"
+                                "source": "https://s3.amazonaws.com/cloudbees-vpn/beescloud/customer.conf"
                             }, 
                             "/etc/openvpn/customer.p12": {
                                 "mode": "000644", 
-                                "source": "https://s3.amazonaws.com/cloudbees-vpn/customer.p12"
+                                "source": "https://s3.amazonaws.com/cloudbees-vpn/beescloud/customer.p12"
                             }, 
                             "/var/log/openvpn/readme.txt": {
                                 "content": "logs folder", 
@@ -165,7 +165,7 @@
                                 "# CLOUDBEES VPN CONFIGURATION\n", 
                                 "######\n", 
                                 "sysctl -w net.ipv4.ip_forward=1\n", 
-                                "iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10\n", 
+                                "iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.1.10\n", 
                                 "######\n", 
                                 "# STANDARD CLOUDFORMATION SCRIPT (see vpc_single_instance_in_subnet.template)\n", 
                                 "######\n", 
@@ -222,7 +222,7 @@
                         "Ref": "InstanceSecurityGroup"
                     }
                 ], 
-                "PrivateIpAddress": "192.168.5.10", 
+                "PrivateIpAddress": "192.168.1.5", 
                 "SubnetId": {
                     "Ref": "Subnet"
                 }
@@ -568,7 +568,7 @@
                         "Ref": "InstanceSecurityGroup"
                     }
                 ], 
-                "PrivateIpAddress": "192.168.5.50", 
+                "PrivateIpAddress": "192.168.1.50", 
                 "SubnetId": {
                     "Ref": "Subnet"
                 }
@@ -580,7 +580,7 @@
         }, 
         "Subnet": {
             "Properties": {
-                "CidrBlock": "192.168.5.0/24", 
+                "CidrBlock": "192.168.1.0/24", 
                 "Tags": [
                     {
                         "Key": "Application", 
@@ -619,7 +619,7 @@
         }, 
         "VPC": {
             "Properties": {
-                "CidrBlock": "192.168.5.0/24", 
+                "CidrBlock": "192.168.1.0/24", 
                 "Tags": [
                     {
                         "Key": "Application", 
