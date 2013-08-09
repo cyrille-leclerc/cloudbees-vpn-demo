@@ -1,31 +1,31 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09", 
-    "Description": "CloudBees VPN Demo", 
+    "Description": "CloudBees VPN Demo with subnet 192.168.5.0/24", 
     "Mappings": {
         "RegionMap": {
             "ap-northeast-1": {
-                "AMI": "ami-173fbf16"
+                "AMI": "ami-39b23d38"
             }, 
             "ap-southeast-1": {
-                "AMI": "ami-aa9ed2f8"
+                "AMI": "ami-fade91a8"
             }, 
             "ap-southeast-2": {
-                "AMI": "ami-363eaf0c"
+                "AMI": "ami-d16bfbeb"
             }, 
             "eu-west-1": {
-                "AMI": "ami-44939930"
+                "AMI": "ami-c7c0d6b3"
             }, 
             "sa-east-1": {
-                "AMI": "ami-dd6bb0c0"
+                "AMI": "ami-5253894f"
             }, 
             "us-east-1": {
-                "AMI": "ami-3275ee5b"
+                "AMI": "ami-05355a6c"
             }, 
             "us-west-1": {
-                "AMI": "ami-66d1fc23"
+                "AMI": "ami-3ffed17a"
             }, 
             "us-west-2": {
-                "AMI": "ami-ecbe2adc"
+                "AMI": "ami-0358ce33"
             }
         }
     }, 
@@ -57,9 +57,23 @@
         }
     }, 
     "Parameters": {
-        "KeyName": {
+        "CloudBeesAccountDomain": {
+            "Default": "cyrille-leclerc", 
+            "Description": "Domain of your CloudBees account (e.g. https://my-domain.ci.cloudbees.com/)", 
+            "Type": "String"
+        }, 
+        "Ec2KeyPairName": {
             "Default": "cloudbees-vpn-demo", 
-            "Description": "Name of and existing EC2 KeyPair to enable SSH access to the instance", 
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ec2 instances", 
+            "Type": "String"
+        }, 
+        "JenkinsApiToken": {
+            "Description": "Jenkins API Token see https://my-domain.ci.cloudbees.com/me/configure", 
+            "Type": "String"
+        }, 
+        "JenkinsUsername": {
+            "Default": "cleclerc@cloudbees.com", 
+            "Description": "Jenkins Username see https://developer.cloudbees.com/bin/view/DEV/JenkinsVPN 'Scripting VPN Connection' and https://my-domain.ci.cloudbees.com/me/configure", 
             "Type": "String"
         }
     }, 
@@ -77,20 +91,89 @@
         }, 
         "CloudBeesVpnClientInstance": {
             "Metadata": {
+                "AWS::CloudFormation::Authentication": {
+                    "JenkinsBasicAuth": {
+                        "password": {
+                            "Ref": "JenkinsApiToken"
+                        }, 
+                        "type": "basic", 
+                        "uris": {
+                            "Fn::Join": [
+                                "", 
+                                [
+                                    "https://", 
+                                    {
+                                        "Ref": "CloudBeesAccountDomain"
+                                    }, 
+                                    ".ci.cloudbees.com/"
+                                ]
+                            ]
+                        }, 
+                        "username": {
+                            "Ref": "JenkinsUsername"
+                        }
+                    }
+                }, 
                 "AWS::CloudFormation::Init": {
                     "config": {
+                        "commands": {
+                            "a1": {
+                                "command": "echo  \"\" >> /etc/openvpn/customer.conf"
+                            }, 
+                            "a2": {
+                                "command": "echo  \"status /var/log/openvpn/openvpn-status.log\" >> /etc/openvpn/customer.conf"
+                            }, 
+                            "a3": {
+                                "command": "echo  \"log /var/log/openvpn/openvpn.log\" >> /etc/openvpn/customer.conf"
+                            }, 
+                            "a4": {
+                                "command": "echo  \"verb 6' >> /etc/openvpn/customer.conf\" >> /etc/openvpn/customer.conf"
+                            }, 
+                            "a5": {
+                                "command": "sysctl -w net.ipv4.ip_forward=1"
+                            }, 
+                            "a6": {
+                                "command": "iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10"
+                            }
+                        }, 
                         "files": {
                             "/etc/default/openvpn": {
                                 "content": "Autostart=customer\n", 
                                 "mode": "000644"
                             }, 
                             "/etc/openvpn/customer.conf": {
+                                "authentication": "JenkinsBasicAuth", 
                                 "mode": "000644", 
-                                "source": "https://s3.amazonaws.com/cloudbees-vpn/customer.conf"
+                                "source": {
+                                    "Fn::Join": [
+                                        "", 
+                                        [
+                                            "https://", 
+                                            {
+                                                "Ref": "CloudBeesAccountDomain"
+                                            }, 
+                                            ".ci.cloudbees.com", 
+                                            "/vpn/customer.conf"
+                                        ]
+                                    ]
+                                }
                             }, 
                             "/etc/openvpn/customer.p12": {
+                                "authentication": "JenkinsBasicAuth", 
                                 "mode": "000644", 
-                                "source": "https://s3.amazonaws.com/cloudbees-vpn/customer.p12"
+                                "source": {
+                                    "Fn::Join": [
+                                        "", 
+                                        [
+                                            "https://", 
+                                            {
+                                                "Ref": "CloudBeesAccountDomain"
+                                            }, 
+                                            ".ci.cloudbees.com", 
+                                            "/vpn/customer.p12"
+                                        ]
+                                    ]
+                                }
                             }, 
                             "/var/log/openvpn/readme.txt": {
                                 "content": "logs folder", 
@@ -133,7 +216,7 @@
                 }, 
                 "InstanceType": "t1.micro", 
                 "KeyName": {
-                    "Ref": "KeyName"
+                    "Ref": "Ec2KeyPairName"
                 }, 
                 "NetworkInterfaces": [
                     {
@@ -164,8 +247,8 @@
                                 "######\n", 
                                 "# CLOUDBEES VPN CONFIGURATION\n", 
                                 "######\n", 
-                                "sysctl -w net.ipv4.ip_forward=1\n", 
-                                "iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10\n", 
+                                "# sysctl -w net.ipv4.ip_forward=1\n", 
+                                "# iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5.10\n", 
                                 "######\n", 
                                 "# STANDARD CLOUDFORMATION SCRIPT (see vpc_single_instance_in_subnet.template)\n", 
                                 "######\n", 
@@ -438,8 +521,7 @@
                                 }
                             }
                         }, 
-                        "sources": {
-                        }
+                        "sources": {}
                     }
                 }, 
                 "Comment": "Install a Source Code Server (git and svn)"
@@ -456,7 +538,7 @@
                 }, 
                 "InstanceType": "t1.micro", 
                 "KeyName": {
-                    "Ref": "KeyName"
+                    "Ref": "Ec2KeyPairName"
                 }, 
                 "NetworkInterfaces": [
                     {
@@ -501,17 +583,16 @@
                                 "\n", 
                                 "REPOS=bees-shop\n", 
                                 "svnadmin create /var/svn/$REPOS\n", 
-                                "wget -O /tmp/bees-shop-clickstart.zip https://github.com/CloudBees-community/bees-shop-clickstart/archive/master.zip\n",
-                                "unzip -d /tmp/ /tmp/bees-shop-clickstart.zip\n",
+                                "wget -O /tmp/bees-shop-clickstart.zip https://github.com/CloudBees-community/bees-shop-clickstart/archive/master.zip\n", 
+                                "unzip -d /tmp/ /tmp/bees-shop-clickstart.zip\n", 
                                 "svn import -m\"initial import\" /tmp/bees-shop-clickstart-master file:///var/svn/$REPOS/trunk --username cloudbees --password cloudbees\n", 
-                                
                                 "chown -R apache:apache /var/svn/$REPOS\n", 
                                 "chmod -R g+ws /var/svn/$REPOS\n", 
-                                "\n",
-                                "#cleanup\n",
+                                "\n", 
+                                "#cleanup\n", 
                                 "rm -rf /tmp/bees-shop-clickstart.zip\n", 
                                 "rm -rf /tmp/bees-shop-clickstart-master\n", 
-                                "\n",
+                                "\n", 
                                 "######", 
                                 "# STANDARD CLOUDFORMATION SCRIPT (see vpc_single_instance_in_subnet.template)", 
                                 "######", 
