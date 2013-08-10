@@ -1,4 +1,8 @@
-# CloudBees VPN demo
+# Lab
+
+[CloudBees Vpn on Amazon VPC Lab](https://github.com/cyrille-leclerc/cloudbees-vpn-demo/wiki/Lab1)
+
+# CloudBees Vpn on Amazon VPC Demo Architecture
 
 ![Cloudbees Vpn Client Demo](https://raw.github.com/wiki/cyrille-leclerc/cloudbees-vpn-demo/img/cloudbees-vpn-client.png)
 
@@ -15,7 +19,7 @@
 * OpenVpn installed with as a Linux service
 * Private IP: `192.168.5.10`
 * Configuration: `/etc/openvpn/`
-  * [customer.conf](https://s3.amazonaws.com/cloudbees-vpn/customer.conf)
+  * [customer.conf](https://raw.github.com/wiki/cyrille-leclerc/cloudbees-vpn-demo/attachment/customer.conf)
 * OpenVpn logs: `/var/log/openvpn`
 * Network Configuration 
  
@@ -28,15 +32,13 @@ iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5
 
 * Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L382
 * Private IP: `192.168.5.50`
-* Subversion installed with http://localhost/svn/petclinic/trunk/ and user "cloudbees:cloudbees"
+* Subversion installed with http://localhost/svn/bees-shop/trunk/ and user "cloudbees:cloudbees"
 
 
 ## Troubleshooting Info
 
 
 ### Jenkins Slave environment details
-
-See Jenkins job https://testme.ci.beescloud.com/job/vpn-test-build/
 
 
 ```
