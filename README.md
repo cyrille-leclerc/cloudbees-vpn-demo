@@ -1,8 +1,10 @@
+# CloudBees Vpn on Amazon VPC Demo
+
 # Lab
 
-[CloudBees Vpn on Amazon VPC Lab](https://github.com/cyrille-leclerc/cloudbees-vpn-demo/wiki/Lab1)
+**[CloudBees Vpn on Amazon VPC Lab](https://github.com/cyrille-leclerc/cloudbees-vpn-demo/wiki/Lab1)**
 
-# CloudBees Vpn on Amazon VPC Demo Architecture
+# Architecture
 
 ![Cloudbees Vpn Client Demo](https://raw.github.com/wiki/cyrille-leclerc/cloudbees-vpn-demo/img/cloudbees-vpn-client.png)
 
