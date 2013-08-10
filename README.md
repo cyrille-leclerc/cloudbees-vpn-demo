@@ -17,7 +17,7 @@
 
 ## CloudBeesVpnClient
 
-* Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L78
+* Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-demo.json
 * OpenVpn installed with as a Linux service
 * Private IP: `192.168.5.10`
 * Configuration: `/etc/openvpn/`
@@ -32,7 +32,7 @@ iptables -t nat -A POSTROUTING -s 192.168.252.0/24 -j SNAT --to-source 192.168.5
 
 ## SourceCodeServer
 
-* Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-client.json#L382
+* Configured via CloudFormation - CloudConfig: https://github.com/cyrille-leclerc/cloudbees-vpn-demo/blob/master/src/main/cloudformation/cloudformation-cloudbees-vpn-demo.json
 * Private IP: `192.168.5.50`
 * Subversion installed with http://localhost/svn/bees-shop/trunk/ and user "cloudbees:cloudbees"
 
