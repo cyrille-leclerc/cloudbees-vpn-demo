@@ -88,10 +88,6 @@
                                 "mode": "000644", 
                                 "source": "https://s3.amazonaws.com/cloudbees-vpn/beescloud/customer.conf"
                             }, 
-                            "/etc/openvpn/customer.p12": {
-                                "mode": "000644", 
-                                "source": "https://s3.amazonaws.com/cloudbees-vpn/beescloud/customer.p12"
-                            }, 
                             "/var/log/openvpn/readme.txt": {
                                 "content": "logs folder", 
                                 "mode": "000644"

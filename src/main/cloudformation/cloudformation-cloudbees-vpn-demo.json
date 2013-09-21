@@ -149,23 +149,6 @@
                                     ]
                                 }
                             }, 
-                            "/etc/openvpn/customer.p12": {
-                                "authentication": "JenkinsBasicAuth", 
-                                "mode": "000644", 
-                                "source": {
-                                    "Fn::Join": [
-                                        "", 
-                                        [
-                                            "https://", 
-                                            {
-                                                "Ref": "CloudBeesAccountDomain"
-                                            }, 
-                                            ".ci.cloudbees.com", 
-                                            "/vpn/customer.p12"
-                                        ]
-                                    ]
-                                }
-                            }, 
                             "/var/log/openvpn/readme.txt": {
                                 "content": "logs folder", 
                                 "mode": "000644"
